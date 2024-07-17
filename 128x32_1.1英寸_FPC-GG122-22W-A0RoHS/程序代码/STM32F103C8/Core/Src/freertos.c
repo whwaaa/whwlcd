@@ -122,7 +122,6 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   printf("iic screen test...\n");
-  lcd_init();
   lcd_display_test();
   printf("lcd init ok\n");
 
