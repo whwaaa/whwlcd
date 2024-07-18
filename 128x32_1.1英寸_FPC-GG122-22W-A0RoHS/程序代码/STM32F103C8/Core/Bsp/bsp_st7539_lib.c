@@ -155,12 +155,12 @@ void lcd_all_pixel_on( uint8_t ap ) {
 }
 
 /**
- * 
+ * 反显模式
  * 
  * D7  D6  D5  D4  D3  D2  D1  D0
  * 1   0   1   0   0   1   1   INV
  * INV=0：默认显示模式
- * INV=1：逆向显示
+ * INV=1：反显模式，(即数据1、0互换的效果)
  * inv取值：0~1
 */
 void lcd_set_inverse_display( uint8_t inv ) {
@@ -170,12 +170,12 @@ void lcd_set_inverse_display( uint8_t inv ) {
 }
 
 /**
- * 
+ * 显示开启
  * 
  * D7  D6  D5  D4  D3  D2  D1  D0
  * 1   0   1   0   1   1   1   PD
- * PD=0：
- * PD=1：
+ * PD=0：关闭显示（不是控制背光）
+ * PD=1：开启显示
  * pd取值：0~1
 */
 void lcd_set_display_enable( uint8_t pd ) {
@@ -187,12 +187,22 @@ void lcd_set_display_enable( uint8_t pd ) {
 /**
  * 设置扫描方向
  * 
+ * /**
+ *         SEG191                    SEG0
+ *     COM0  -------------------------
+ *           |                       |--|      
+ *           |                       |  |     
+ *           |                       |--|
+ *     COM63 -------------------------
+ * 
  * D7  D6  D5  D4  D3  D2  D1  D0
  * 1   1   0   0   0   MY  MX  0
- * scan:0 => MY:0 MX:0
- * scan:1 => MY:0 MX:1
- * scan:2 => MY:1 MX:0
- * scan:3 => MY:1 MX:1
+ * scan:0 => MY:0 MX:0  (COM0->COM63)(SEG0->SEG191) 
+ * scan:1 => MY:0 MX:1  (COM0->COM63)(SEG191->SEG0)
+ * scan:2 => MY:1 MX:0  (COM63->COM0)(SEG0->SEG191)
+ * scan:3 => MY:1 MX:1  (COM63->COM0)(SEG191->SEG0)
+ * 1.数据显示方向由COM扫描方向决定，低位数据先被扫描
+ * 2.屏幕显示区域只在SEG191~SEG64
  * scan取值：0~3
 */
 void lcd_set_scan_direction( uint8_t scan ) {
@@ -224,6 +234,7 @@ void lcd_nop( void ) {
 /**
  * 设置偏差
  * 
+ * 应该是设置屏幕亮度的意思，测试1/9最亮，1/6最暗
  * D7  D6  D5  D4  D3  D2  D1  D0
  * 1   1   1   0   1   0   BR1 BR0
  * ratio:0 => BR1:0 BR0:0  偏差1/6
