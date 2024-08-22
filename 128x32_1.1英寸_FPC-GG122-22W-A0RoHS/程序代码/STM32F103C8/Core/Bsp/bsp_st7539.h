@@ -12,9 +12,6 @@
 #define W_CMD_ADDRESS  0x7C
 //写数据地址
 #define W_DAT_ADDRESS  0x7E
-
-// //读命令地址??
-// #define R_CMD_ADDRESS  0x7B
 //读数据地址
 #define R_DAT_ADDRESS  0x7F
 
@@ -55,17 +52,14 @@ void lcd_set_partial_end_address( uint8_t den );
 //选择测试命令表
 void lcd_test_control( uint8_t h );
 
-
 void lcd_clear( void );
 void lcd_init( void );
 
-
-void lcd_display_test( void );
-
-
-
-
-
+void writeFont_16x16( uint8_t x, uint8_t y, char *font );
+void writeFont_24x24( uint8_t x, uint8_t y, char *font );
+void writeFont_32x32( uint8_t x, uint8_t y, char *font );
+void writeLogo_0( uint8_t x, uint8_t y );
+void writeFont_ASCII8x16( uint8_t x, uint8_t y, char *data, uint8_t isBold );
 
 
 #endif /*__BSP_ST7539__H*/

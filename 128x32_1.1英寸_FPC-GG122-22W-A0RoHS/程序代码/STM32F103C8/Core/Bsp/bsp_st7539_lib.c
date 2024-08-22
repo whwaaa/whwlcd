@@ -50,14 +50,14 @@ void lcd_set_scroll_line( uint8_t line ) {
  * 
  * 例：在page0的第0列写入数据0xFE，在RAM中对应的位置如下：
  *        ------------------...共192列 
- *        1
- *        1
- *        1
- *        1
- *        1
- *        1
- *        1
  *        0
+ *        1
+ *        1
+ *        1
+ *        1
+ *        1
+ *        1
+ *        1
  *        ------------------...共192列
  * 
  * D7  D6  D5  D4  D3  D2  D1  D0
@@ -128,10 +128,10 @@ void lcd_set_ram_address_control( uint8_t ac ) {
  * 
  * D7  D6  D5  D4  D3  D2  D1  D0
  * 1   0   1   0   0   0   FR1 FR0
- * 0xA0 => FR1:0 FR0:0  76fps
- * 0xA1 => FR1:0 FR0:1  95fps
- * 0xA2 => FR1:1 FR0:0  132fps
- * 0xA3 => FR1:1 FR0:1  168fps
+ * frate:0 => 0xA0 => FR1:0 FR0:0  76fps
+ * frate:1 => 0xA1 => FR1:0 FR0:1  95fps
+ * frate:2 => 0xA2 => FR1:1 FR0:0  132fps
+ * frate:3 => 0xA3 => FR1:1 FR0:1  168fps
  * frate取值：0~3
 */
 void lcd_set_frame_rate( uint8_t frate ) {

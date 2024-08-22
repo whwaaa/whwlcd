@@ -121,14 +121,19 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-  printf("iic screen test...\n");
-  lcd_display_test();
-  printf("lcd init ok\n");
-
+  lcd_init();//初始化
+  lcd_clear();//清屏
+  writeFont_16x16(0, 0, "获取屏幕开发资料");
+  writeFont_16x16(0, 16, "微信搜索公众号：");
+  writeFont_24x24(0, 36, (char*)"猫狗之家");
+  writeLogo_0(96, 36);
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    lcd_set_scroll_line(0);//从0行显示（0~3页）
+    vTaskDelay(5000);
+    lcd_set_scroll_line(32);//从32行显示（4~7页）
+    vTaskDelay(4000);
   }
   /* USER CODE END StartDefaultTask */
 }
