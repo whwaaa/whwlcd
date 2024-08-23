@@ -63,11 +63,11 @@ void Error_Handler(void);
 #define RST_GPIO_Port GPIOA
 #define DC_Pin GPIO_PIN_4
 #define DC_GPIO_Port GPIOA
-#define BL_Pin GPIO_PIN_6
+#define BL_Pin GPIO_PIN_8
 #define BL_GPIO_Port GPIOA
-// A0   => DC 1Êý¾Ý/0ÃüÁî¿ØÖÆ£¨¿É¿Ø£©
-// /RD  => 8080MPU/6800MPUÑ¡ÔñÐÅºÅ£¬´Ë´¦²»ÓÃ£¨Ä¬ÈÏ²»¿É¿Ø£©
-// /WR  => ¶ÁÐ´ÐÅºÅ"H":Read "L":Write£¬²Â²âÅÅÏßÒÑÇ¿ÖÆÀ­µÍ£¨Ä¬ÈÏ²»¿É¿Ø£©
+// A0   => DC 1ï¿½ï¿½ï¿½ï¿½/0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½É¿Ø£ï¿½
+// /RD  => 8080MPU/6800MPUÑ¡ï¿½ï¿½ï¿½ÅºÅ£ï¿½ï¿½Ë´ï¿½ï¿½ï¿½ï¿½Ã£ï¿½Ä¬ï¿½Ï²ï¿½ï¿½É¿Ø£ï¿½
+// /WR  => ï¿½ï¿½Ð´ï¿½Åºï¿½"H":Read "L":Writeï¿½ï¿½ï¿½Â²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½Ä¬ï¿½Ï²ï¿½ï¿½É¿Ø£ï¿½
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

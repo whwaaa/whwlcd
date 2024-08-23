@@ -27,6 +27,13 @@ void lcd_clear( void ) {
     }
 }
 
+//1.效果最佳
+//lcd_bias_set(1);
+//v5_voltage_regulator_internal_resistor_ratio_set(2);
+//2.次之
+//lcd_bias_set(0);
+//v5_voltage_regulator_internal_resistor_ratio_set(4);
+
 void lcd_init( void ) {
     HAL_GPIO_WritePin(RST_GPIO_Port, RST_Pin, GPIO_PIN_SET);
     HAL_Delay(100);
@@ -36,8 +43,10 @@ void lcd_init( void ) {
     HAL_Delay(200);
 
     reset();//复位
-    adc_select(1);
     HAL_Delay(100);
+
+    // adc_select(1);
+
     power_controller_set(4);//Voltage Coboost ON 
     HAL_Delay(10);
     power_controller_set(6);//Voltage Regulator ON 
@@ -45,24 +54,24 @@ void lcd_init( void ) {
     power_controller_set(7);//Voltage Follower ON 
     HAL_Delay(10);
 
-    lcd_bias_set(0);//默认设置Bias 1/9
+    lcd_bias_set(1);//默认设置Bias 1/9
     HAL_Delay(10);
 
     //电阻率选择
-    v5_voltage_regulator_internal_resistor_ratio_set(7);
+    v5_voltage_regulator_internal_resistor_ratio_set(2);
     HAL_Delay(10);
 
     //对比度设置
-    the_electronic_volume(2);
+    the_electronic_volume(0);
     HAL_Delay(10);
 
     //初始化显示行0-63
     display_start_line_set(0);
     HAL_Delay(10);
-    //display_all_points_ON_OFF();
+    //display_all_points_ON_OFF(1);
 
     display_on_off(1);//开启显示
-    //display_normal_reverse(0);//反显
+    // display_normal_reverse(1);//反显
 
     lcd_clear();
 

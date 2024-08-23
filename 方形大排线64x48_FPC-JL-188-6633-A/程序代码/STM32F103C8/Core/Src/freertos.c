@@ -122,9 +122,10 @@ void StartDefaultTask(void const * argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   printf("test init\n");
-  HAL_TIM_Base_Start(&htim3);
-  
-  //HAL_GPIO_WritePin(BL_GPIO_Port, BL_Pin, GPIO_PIN_SET);
+
+  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+  __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 50);
+
   lcd_init();
   lcd_test_display();
   /* Infinite loop */
