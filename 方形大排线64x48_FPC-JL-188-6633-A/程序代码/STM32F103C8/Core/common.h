@@ -1,6 +1,7 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+#define SLIDE_STR "微信搜索公众号：猫狗之家电子获取屏幕开发资料 "
 
 /* LIB ------------------------------------------------------------*/
 #include <stdio.h>

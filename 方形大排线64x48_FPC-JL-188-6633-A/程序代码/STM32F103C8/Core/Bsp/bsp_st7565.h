@@ -28,7 +28,14 @@ void nop_( void );
 void test_( void );
 
 void lcd_init( void );
-void lcd_test_display( void );
+void lcd_clear( void );
+void writeDataToRAM( uint8_t page, uint8_t startX, uint8_t endX, uint8_t *pdata );
+void writeFont_ASCII8x16( uint8_t x, uint8_t y, char *data, uint8_t isBold );
+void writeFont_16x16( uint8_t x, uint8_t y, char *font );
+void writeFont_24x24( uint8_t x, uint8_t y, char *font );
+void writeFont_32x32( uint8_t x, uint8_t y, char *font );
+void slideFont32x32( uint8_t width, uint8_t x, uint8_t y, char *font, uint16_t fIdx );
+void writeLogo_0( uint8_t x, uint8_t y );
 
 #endif /*__BSP_ST7565__H*/
 
