@@ -23,7 +23,7 @@
 #include "queue.h"
 #include "semphr.h"
 
-#define FW_VERSION  "V1.0.0"
+#define FW_VERSION  "V1.0.1"
 
 
 #endif /* __COMMON_H__ */

@@ -85,7 +85,7 @@ void writeDataToRAM( uint8_t page, uint8_t startX, uint8_t endX, uint8_t *pdata 
  * isBold：1粗体，0非粗体
 */
 void writeFont_ASCII8x16( uint8_t x, uint8_t y, char *data, uint8_t isBold ) {
-    uint8_t page, fontLen, yu, xlen_t, (*asciiFont_t)[16];
+    uint8_t page, fontLen, yu, xlen_t, (*asciiFont_t)[16], pNum;
     uint16_t xlen;
 
     xlen = strlen(data) * 8;//utf8一个字3字节
@@ -99,9 +99,13 @@ void writeFont_ASCII8x16( uint8_t x, uint8_t y, char *data, uint8_t isBold ) {
     } else {
         asciiFont_t = asciiFont;
     }
+    if ( yu == 0 ) {
+        pNum = 2;//一个字高16占2页
+    } else {
+        pNum = 3;//一个字高16占3页
+    }
 
-    //一个字高16占2页
-    for ( uint8_t i=0; i<2&&page<9; i++,page++ ) {
+    for ( uint8_t i=0; i<pNum&&page<9; i++,page++ ) {
         xlen_t = xlen;
         //设置RAM列地址
         lcd_set_column_address(x);
@@ -133,8 +137,10 @@ void writeFont_ASCII8x16( uint8_t x, uint8_t y, char *data, uint8_t isBold ) {
                             xlen_t--;
                             if ( i == 0 ) {
                                 writeByteData(asciiFont_t[idx][i*8+j]<<yu);
-                            } else {
+                            } else if ( i == 1 ) {
                                 writeByteData(asciiFont_t[idx][j]>>(8-yu)|asciiFont_t[idx][i*8+j]<<yu);
+                            } else if ( i == 2 ) {
+                                writeByteData(asciiFont_t[idx][j]>>(8-yu));
                             }
                         }
                         break;
@@ -152,7 +158,7 @@ void writeFont_ASCII8x16( uint8_t x, uint8_t y, char *data, uint8_t isBold ) {
  * data：显示的数据
 */
 void writeFont_16x16( uint8_t x, uint8_t y, char *font ) {
-    uint8_t page, fontLen, yu;
+    uint8_t page, fontLen, yu, pNum;
     uint16_t xlen, xlen_t;
 
     xlen = strlen(font) / 3 * 16;//utf8一个字3字节
@@ -161,9 +167,14 @@ void writeFont_16x16( uint8_t x, uint8_t y, char *font ) {
     //计算RAM页地址(0~3)
     page = y / 8;
     yu = y % 8;
+    if ( yu == 0 ) {
+        pNum = 2;//一个字高16占2页
+    } else {
+        pNum = 3;//一个字高16占3页
+    }
 
     //一个字高16占2页
-    for ( uint8_t i=0; i<2&&page<9; i++,page++ ) {
+    for ( uint8_t i=0; i<pNum&&page<9; i++,page++ ) {
         xlen_t = xlen;
         //设置RAM列地址
         lcd_set_column_address(x);
@@ -196,72 +207,10 @@ void writeFont_16x16( uint8_t x, uint8_t y, char *font ) {
                             xlen_t--;
                             if ( i == 0 ) {
                                 writeByteData(myFont_16[idx][i*16+j]<<yu);
-                            } else {
-                                
+                            } else  if ( i == 1 ) {
                                 writeByteData(myFont_16[idx][(i-1)*16+j]>>(8-yu)|(myFont_16[idx][i*16+j]<<yu));
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-    }
-}
-
-/**
- * 显示32x32字符
- * x取值：0~127
- * y取值：0~63
- * data：显示的数据
-*/
-void writeFont_32x32( uint8_t x, uint8_t y, char *font ) {
-    uint8_t page, fontLen, yu;
-    uint16_t xlen, xlen_t;
-
-    xlen = strlen(font) / 3 * 32;//utf8一个字3字节
-    xlen = xlen > (128 - x) ? (128 - x) : xlen;
-    fontLen = (xlen+31)/32;//字数长度
-    //计算RAM页地址(0~3)
-    page = y / 8;
-    yu = y % 8;
-
-    //一个字高32占4页
-    for ( uint8_t i=0; i<4&&page<9; i++,page++ ) {
-        xlen_t = xlen;
-        //设置RAM列地址
-        lcd_set_column_address(x);
-        //设置RAM页地址
-        lcd_set_page_address(page);
-
-        if ( yu == 0 ) {
-            //遍历所有字
-            for ( uint8_t b=0; b<fontLen; b++ ) {
-                //查找font索引
-                for ( uint8_t idx=0; idx<(sizeof(myFontIdx_32)/3); idx++ ) {
-                    if ( (uint32_t)(font[b*3]<<16|font[b*3+1]<<8|font[b*3+2]) == myFontIdx_32[idx] ) {//查找到font索引
-                        //写入一个字font数据
-                        for ( uint8_t j=0; j<32&&xlen_t>0; j++ ) {
-                            xlen_t--;
-                            writeByteData(myFont_32[idx*4+i][j]);
-                        }
-                        break;
-                    }
-                }
-            }
-        } else {
-            //遍历所有字
-            for ( uint8_t b=0; b<fontLen; b++ ) {
-                //查找font索引
-                for ( uint8_t idx=0; idx<(sizeof(myFontIdx_32)/3); idx++ ) {
-                    if ( (uint32_t)(font[b*3]<<16|font[b*3+1]<<8|font[b*3+2]) == myFontIdx_32[idx] ) {//查找到font索引
-                        //写入一个字font数据
-                        for ( uint8_t j=0; j<32&&xlen_t>0; j++ ) {
-                            xlen_t--;
-                            if ( i == 0 ) {
-                                writeByteData(myFont_32[idx*4+i][j]<<yu);
-                            } else {
-                                writeByteData((myFont_32[idx*4+(i-1)][j]>>(8-yu))|(myFont_32[idx*4+i][j]<<yu));
+                            } else  if ( i == 2 ) {
+                                writeByteData(myFont_16[idx][(i-1)*16+j]>>(8-yu));
                             }
                         }
                         break;
@@ -279,7 +228,7 @@ void writeFont_32x32( uint8_t x, uint8_t y, char *font ) {
  * data：显示的数据
 */
 void writeFont_24x24( uint8_t x, uint8_t y, char *font ) {
-    uint8_t page, fontLen, yu;
+    uint8_t page, fontLen, yu, pNum;
     uint16_t xlen, xlen_t;
 
     xlen = strlen(font) / 3 * 24;//utf8一个字3字节
@@ -288,9 +237,13 @@ void writeFont_24x24( uint8_t x, uint8_t y, char *font ) {
     //计算RAM页地址(0~3)
     page = y / 8;
     yu = y % 8;
+    if ( yu == 0 ) {
+        pNum = 3;//一个字高24占3页
+    } else {
+        pNum = 4;//一个字高24占4页
+    }
 
-    //一个字高24占3页
-    for ( uint8_t i=0; i<3&&page<9; i++,page++ ) {
+    for ( uint8_t i=0; i<pNum&&page<9; i++,page++ ) {
         xlen_t = xlen;
         //设置RAM列地址
         lcd_set_column_address(x);
@@ -323,8 +276,85 @@ void writeFont_24x24( uint8_t x, uint8_t y, char *font ) {
                             xlen_t--;
                             if ( i == 0 ) {
                                 writeByteData(myFont_24[idx*3+i][j]<<yu);
-                            } else {
+                            } else if ( i == 1 ) {
                                 writeByteData((myFont_24[idx*3+(i-1)][j]>>(8-yu))|(myFont_24[idx*3+i][j]<<yu));
+                            } else if ( i == 2 ) {
+                                writeByteData((myFont_24[idx*3+(i-1)][j]>>(8-yu))|(myFont_24[idx*3+i][j]<<yu));
+                            } else if ( i == 3 ) {
+                                writeByteData(myFont_24[idx*3+(i-1)][j]>>(8-yu));
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 显示32x32字符
+ * x取值：0~127
+ * y取值：0~63
+ * data：显示的数据
+*/
+void writeFont_32x32( uint8_t x, uint8_t y, char *font ) {
+    uint8_t page, fontLen, yu, pNum;
+    uint16_t xlen, xlen_t;
+
+    xlen = strlen(font) / 3 * 32;//utf8一个字3字节
+    xlen = xlen > (128 - x) ? (128 - x) : xlen;
+    fontLen = (xlen+31)/32;//字数长度
+    //计算RAM页地址(0~3)
+    page = y / 8;
+    yu = y % 8;
+    if ( yu == 0 ) {
+        pNum = 4;//一个字高32占4页
+    } else {
+        pNum = 5;//一个字高32占5页
+    }
+
+    for ( uint8_t i=0; i<pNum&&page<9; i++,page++ ) {
+        xlen_t = xlen;
+        //设置RAM列地址
+        lcd_set_column_address(x);
+        //设置RAM页地址
+        lcd_set_page_address(page);
+
+        if ( yu == 0 ) {
+            //遍历所有字
+            for ( uint8_t b=0; b<fontLen; b++ ) {
+                //查找font索引
+                for ( uint8_t idx=0; idx<(sizeof(myFontIdx_32)/3); idx++ ) {
+                    if ( (uint32_t)(font[b*3]<<16|font[b*3+1]<<8|font[b*3+2]) == myFontIdx_32[idx] ) {//查找到font索引
+                        //写入一个字font数据
+                        for ( uint8_t j=0; j<32&&xlen_t>0; j++ ) {
+                            xlen_t--;
+                            writeByteData(myFont_32[idx*4+i][j]);
+                        }
+                        break;
+                    }
+                }
+            }
+        } else {
+            //遍历所有字
+            for ( uint8_t b=0; b<fontLen; b++ ) {
+                //查找font索引
+                for ( uint8_t idx=0; idx<(sizeof(myFontIdx_32)/3); idx++ ) {
+                    if ( (uint32_t)(font[b*3]<<16|font[b*3+1]<<8|font[b*3+2]) == myFontIdx_32[idx] ) {//查找到font索引
+                        //写入一个字font数据
+                        for ( uint8_t j=0; j<32&&xlen_t>0; j++ ) {
+                            xlen_t--;
+                            if ( i == 0 ) {
+                                writeByteData(myFont_32[idx*4+i][j]<<yu);
+                            } else if ( i == 1 ) {
+                                writeByteData((myFont_32[idx*4+(i-1)][j]>>(8-yu))|(myFont_32[idx*4+i][j]<<yu));
+                            } else if ( i == 2 ) {
+                                writeByteData((myFont_32[idx*4+(i-1)][j]>>(8-yu))|(myFont_32[idx*4+i][j]<<yu));
+                            } else if ( i == 3 ) {
+                                writeByteData((myFont_32[idx*4+(i-1)][j]>>(8-yu))|(myFont_32[idx*4+i][j]<<yu));
+                            } else if ( i == 4 ) {
+                                writeByteData(myFont_32[idx*4+(i-1)][j]>>(8-yu));
                             }
                         }
                         break;
@@ -342,13 +372,18 @@ void writeFont_24x24( uint8_t x, uint8_t y, char *font ) {
  * data：显示的数据
 */
 void writeLogo_0( uint8_t x, uint8_t y ) {
-    uint8_t page, xlen, xlen_t, yu;
+    uint8_t page, xlen, xlen_t, yu, pNum;
 
     xlen = 128 - x;
     page = y / 8;
     yu = y % 8;
+    if ( yu == 0 ) {
+        pNum = 4;//高64占4页
+    } else {
+        pNum = 5;//高64占5页
+    }
 
-    for ( uint8_t i=0; i<4&&page<9; i++,page++ ) {
+    for ( uint8_t i=0; i<pNum&&page<9; i++,page++ ) {
         xlen_t = xlen;
         //设置RAM列地址
         lcd_set_column_address(x);
@@ -364,8 +399,14 @@ void writeLogo_0( uint8_t x, uint8_t y ) {
                 xlen_t--;
                 if ( i == 0 ) {
                     writeByteData(logo_0[i][j]<<yu);
-                } else {
+                } else if ( i == 1 ) {
                     writeByteData(logo_0[i-1][j]>>(8-yu)|logo_0[i][j]<<yu);
+                } else if ( i == 2 ) {
+                    writeByteData(logo_0[i-1][j]>>(8-yu)|logo_0[i][j]<<yu);
+                } else if ( i == 3 ) {
+                    writeByteData(logo_0[i-1][j]>>(8-yu)|logo_0[i][j]<<yu);
+                } else if ( i == 4 ) {
+                    writeByteData(logo_0[i-1][j]>>(8-yu));
                 }
             } 
         }
