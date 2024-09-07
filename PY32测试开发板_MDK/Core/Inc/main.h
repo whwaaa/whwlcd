@@ -33,10 +33,8 @@ extern "C" {
 #include "py32f0xx.h"
 
 /* Private includes ----------------------------------------------------------*/
-#define RST_GPIO_Port   GPIOB
-#define RST_Pin         GPIO_PIN_0
+
 /* Private defines -----------------------------------------------------------*/
-	
 	
 /* Exported variables prototypes ---------------------------------------------*/
 /* Exported functions prototypes ---------------------------------------------*/

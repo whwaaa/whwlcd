@@ -43,24 +43,23 @@ int main(void)
   HAL_Init();
   
   /* Configure the system clock */
-	APP_SystemClockConfig(); 
+	APP_SystemClockConfig();
+
 	MX_USART1_UART_Init();
+  MX_TIM1_Init();
+  MX_GPIO_Init();
   MX_I2C_Init();
-	MX_GPIO_Init();
-	// MX_TIM16_Init();
-	// HAL_TIM_Base_Start_IT( &htim16 );
-	// HAL_TIM_Base_Start( &htim16 );
-	// __HAL_TIM_SET_COUNTER( &htim16, 0 );
-	
-	// TIM1_PWM_Init();
-	// HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);//通道4开始输出PWM
-	
+  MX_SPI_Init();
+  
+	set_pwm_configchannel_2(45);
   /* Infinite loop */
+  
+  jl188a_lcd_display_demo();
+  fpcgg122_lcd_demo();
+
   printf("py32002A init ok\r\n");
-  lcd_demo();
-  while (1)
-  {
-	 
+  while (1) {
+    HAL_Delay(100);
   }
 }
 

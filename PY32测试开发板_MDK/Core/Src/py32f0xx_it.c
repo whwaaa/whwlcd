@@ -74,16 +74,17 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   HAL_IncTick();
+
+  HAL_TIM_GenerateEvent(&htim1, TIM_EVENTSOURCE_COM);
 }
 void EXTI4_15_IRQHandler(void) {
 	//HAL_GPIO_EXTI_IRQHandler(IR_Pin);
 }
 
-
-void TIM16_IRQHandler(void) {
-  HAL_TIM_IRQHandler(&htim16);
+void TIM1_BRK_UP_TRG_COM_IRQHandler(void)
+{
+  HAL_TIM_IRQHandler(&htim1);
 }
-
 
 /******************************************************************************/
 /* PY32F0xx Peripheral Interrupt Handlers                                     */

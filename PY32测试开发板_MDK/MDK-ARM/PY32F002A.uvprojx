@@ -414,6 +414,11 @@
               <FileType>1</FileType>
               <FilePath>..\Core\Src\py32f0xx_hal_msp.c</FilePath>
             </File>
+            <File>
+              <FileName>spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\spi.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -428,6 +433,21 @@
               <FileName>bsp_st7539_lib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Core\Bsp\bsp_st7539_lib.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Bsp\bsp_font.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_st7565.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Bsp\bsp_st7565.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_st7565_lib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Bsp\bsp_st7565_lib.c</FilePath>
             </File>
           </Files>
         </Group>

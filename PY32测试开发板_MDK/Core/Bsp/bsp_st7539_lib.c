@@ -10,16 +10,16 @@
  * column值对应CA[0,191]
  * column取值：0~191
 */
-void lcd_set_column_address( uint8_t column ) {
+void fpcgg122_lcd_set_column_address( uint8_t column ) {
     uint8_t cmd;
     if ( column > 191 )
         column = 0;
     //设置低位
     cmd = column & 0x0F;
-    writeByteCmd(cmd);//HAL_I2C_Master_Transmit( &HI2Cx, W_CMD_ADDRESS, &cmd, 1, 1000 );
+    fpcgg122_writeByteCmd(cmd);//HAL_I2C_Master_Transmit( &HI2Cx, W_CMD_ADDRESS, &cmd, 1, 1000 );
     //设置高位
     cmd = 0x10 | ( ( column & 0xF0 ) >> 4 );
-    writeByteCmd(cmd);//HAL_I2C_Master_Transmit( &HI2Cx, W_CMD_ADDRESS, &cmd, 1, 1000 );
+    fpcgg122_writeByteCmd(cmd);//HAL_I2C_Master_Transmit( &HI2Cx, W_CMD_ADDRESS, &cmd, 1, 1000 );
 }
 
 /**
@@ -34,10 +34,10 @@ void lcd_set_column_address( uint8_t column ) {
  * 
  * line取值：0~63
 */
-void lcd_set_scroll_line( uint8_t line ) {
+void fpcgg122_lcd_set_scroll_line( uint8_t line ) {
     if ( line > 0x3F ) 
         line = 0;//RST硬件复位默认值
-    writeByteCmd(0x40|line);
+    fpcgg122_writeByteCmd(0x40|line);
 }
 
 /**
@@ -65,10 +65,10 @@ void lcd_set_scroll_line( uint8_t line ) {
  * page取值：0~8（page8是icon RAM，只有1行，写入数据最低为有效）
  * 
 */
-void lcd_set_page_address( uint8_t page ) {
+void fpcgg122_lcd_set_page_address( uint8_t page ) {
     if ( page > 8 )
         page = 0;//RST硬件复位默认值
-    writeByteCmd(0xB0|page);
+    fpcgg122_writeByteCmd(0xB0|page);
 }
 
 /**
@@ -82,9 +82,9 @@ void lcd_set_page_address( uint8_t page ) {
  * 
  * contraset取值0~255
 */
-void lcd_set_contraset( uint8_t contraset ) {
-    writeByteCmd(0x81);
-    writeByteCmd(contraset);
+void fpcgg122_lcd_set_contraset( uint8_t contraset ) {
+    fpcgg122_writeByteCmd(0x81);
+    fpcgg122_writeByteCmd(contraset);
 }
 
 /**
@@ -96,10 +96,10 @@ void lcd_set_contraset( uint8_t contraset ) {
  * PS=1: 部分显示模式
  * ps取值：0~1
 */
-void lcd_set_partial_screen_mode( uint8_t ps ) {
+void fpcgg122_lcd_set_partial_screen_mode( uint8_t ps ) {
     if ( ps > 1 ) 
         ps = 0;//RST硬件复位默认值
-    writeByteCmd(0x84|ps);
+    fpcgg122_writeByteCmd(0x84|ps);
 }
 
 /**
@@ -117,10 +117,10 @@ void lcd_set_partial_screen_mode( uint8_t ps ) {
  * 
  * ac取值：0~7
 */
-void lcd_set_ram_address_control( uint8_t ac ) {
+void fpcgg122_lcd_set_ram_address_control( uint8_t ac ) {
     if ( ac > 7 )
         ac = 0x01;
-    writeByteCmd(0x88|ac);
+    fpcgg122_writeByteCmd(0x88|ac);
 }
 
 /**
@@ -134,10 +134,10 @@ void lcd_set_ram_address_control( uint8_t ac ) {
  * frate:3 => 0xA3 => FR1:1 FR0:1  168fps
  * frate取值：0~3
 */
-void lcd_set_frame_rate( uint8_t frate ) {
+void fpcgg122_lcd_set_frame_rate( uint8_t frate ) {
     if ( frate > 3 ) 
         frate = 0x01;//RST硬件复位默认值
-    writeByteCmd(0xA0|frate);
+    fpcgg122_writeByteCmd(0xA0|frate);
 }
 
 /**
@@ -148,10 +148,10 @@ void lcd_set_frame_rate( uint8_t frate ) {
  * AP=0：默认显示模式
  * AP=1：打开所有的segments
 */
-void lcd_all_pixel_on( uint8_t ap ) {
+void fpcgg122_lcd_all_pixel_on( uint8_t ap ) {
     if ( ap > 1 ) 
         ap = 0;//RST硬件复位默认值
-    writeByteCmd(0xA4|ap);
+    fpcgg122_writeByteCmd(0xA4|ap);
 }
 
 /**
@@ -163,10 +163,10 @@ void lcd_all_pixel_on( uint8_t ap ) {
  * INV=1：反显模式，(即数据1、0互换的效果)
  * inv取值：0~1
 */
-void lcd_set_inverse_display( uint8_t inv ) {
+void fpcgg122_lcd_set_inverse_display( uint8_t inv ) {
     if ( inv > 1 ) 
         inv = 0;//RST硬件复位默认值
-    writeByteCmd(0xA6|inv);
+    fpcgg122_writeByteCmd(0xA6|inv);
 }
 
 /**
@@ -178,10 +178,10 @@ void lcd_set_inverse_display( uint8_t inv ) {
  * PD=1：开启显示
  * pd取值：0~1
 */
-void lcd_set_display_enable( uint8_t pd ) {
+void fpcgg122_lcd_set_display_enable( uint8_t pd ) {
     if ( pd > 1 ) 
         pd = 0;//RST硬件复位默认值
-    writeByteCmd(0xAE|pd);
+    fpcgg122_writeByteCmd(0xAE|pd);
 }
 
 /**
@@ -205,10 +205,10 @@ void lcd_set_display_enable( uint8_t pd ) {
  * 2.屏幕显示区域只在SEG191~SEG64
  * scan取值：0~3
 */
-void lcd_set_scan_direction( uint8_t scan ) {
+void fpcgg122_lcd_set_scan_direction( uint8_t scan ) {
     if ( scan > 3 )
         scan = 0;//RST硬件复位默认值
-    writeByteCmd(0xC0|(scan<<1));
+    fpcgg122_writeByteCmd(0xC0|(scan<<1));
 }
 
 /**
@@ -217,8 +217,8 @@ void lcd_set_scan_direction( uint8_t scan ) {
  * D7  D6  D5  D4  D3  D2  D1  D0
  * 1   1   1   0   0   0   1   0
 */
-void lcd_software_reset( void ) {
-    writeByteCmd(0xE2);//Software Reset
+void fpcgg122_lcd_software_reset( void ) {
+    fpcgg122_writeByteCmd(0xE2);//Software Reset
 }
 
 /**
@@ -227,8 +227,8 @@ void lcd_software_reset( void ) {
  * D7  D6  D5  D4  D3  D2  D1  D0
  * 1   1   1   0   0   0   1   1
 */
-void lcd_nop( void ) {
-    writeByteCmd(0xE3);//nop
+void fpcgg122_lcd_nop( void ) {
+    fpcgg122_writeByteCmd(0xE3);//nop
 }
 
 /**
@@ -243,10 +243,10 @@ void lcd_nop( void ) {
  * ratio:3 => BR1:1 BR0:1  偏差1/9
  * ratio取值：0~3
 */
-void lcd_set_bias_ratio( uint8_t ratio ) {
+void fpcgg122_lcd_set_bias_ratio( uint8_t ratio ) {
     if ( ratio > 3 ) 
         ratio = 3;//RST硬件复位默认值
-    writeByteCmd(0xE8|ratio);
+    fpcgg122_writeByteCmd(0xE8|ratio);
 }
 
 /**
@@ -258,11 +258,11 @@ void lcd_set_bias_ratio( uint8_t ratio ) {
  * 可设置局部显示范围CEN[5:0] : [0,0x3F]
  * comEnd取值0~64
 */
-void lcd_set_com_end( uint8_t comEnd ) {
-    writeByteCmd(0xF1);
+void fpcgg122_lcd_set_com_end( uint8_t comEnd ) {
+    fpcgg122_writeByteCmd(0xF1);
     if ( comEnd > 0x3F ) 
         comEnd = 0x3F;//RST硬件复位默认值
-    writeByteCmd(comEnd);
+    fpcgg122_writeByteCmd(comEnd);
 }
 
 /**
@@ -274,11 +274,11 @@ void lcd_set_com_end( uint8_t comEnd ) {
  * DST[0,0xFC]
  * dst取值：0~64
 */
-void lcd_set_partial_start_address( uint8_t dst ) {
-    writeByteCmd(0xF2);
+void fpcgg122_lcd_set_partial_start_address( uint8_t dst ) {
+    fpcgg122_writeByteCmd(0xF2);
     if ( dst > 0x3F ) 
         dst = 0;//RST硬件复位默认值
-    writeByteCmd(dst);    
+    fpcgg122_writeByteCmd(dst);    
 }
 
 /**
@@ -290,11 +290,11 @@ void lcd_set_partial_start_address( uint8_t dst ) {
  * DEN[0,0xFC]
  * den取值：0~64
 */
-void lcd_set_partial_end_address( uint8_t den ) {
-    writeByteCmd(0xF3);    
+void fpcgg122_lcd_set_partial_end_address( uint8_t den ) {
+    fpcgg122_writeByteCmd(0xF3);    
     if ( den > 0x3F ) 
         den = 0;//RST硬件复位默认值
-    writeByteCmd(den);
+    fpcgg122_writeByteCmd(den);
 }
 
 
@@ -305,9 +305,9 @@ void lcd_set_partial_end_address( uint8_t den ) {
  * 1   1   1   1   1   1   1   1
  * 0   0   0   0   0   0   H1  H0
 */
-void lcd_test_control( uint8_t h ) {
-    writeByteCmd(0xFF);
-    writeByteCmd(h);
+void fpcgg122_lcd_test_control( uint8_t h ) {
+    fpcgg122_writeByteCmd(0xFF);
+    fpcgg122_writeByteCmd(h);
 }
 
 
