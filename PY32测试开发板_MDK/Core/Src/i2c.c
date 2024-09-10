@@ -44,7 +44,6 @@ void HAL_I2C_MspInit(I2C_HandleTypeDef* i2cHandle)
     __HAL_RCC_I2C_RELEASE_RESET();
     
   }
-  printf("i2c init\n");
 }
 
 void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)

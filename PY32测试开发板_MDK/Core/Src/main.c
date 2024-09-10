@@ -41,26 +41,44 @@ int main(void)
 {
   /* Reset of all peripherals, Initializes the Flash interface and the Systick */
   HAL_Init();
-  
+
   /* Configure the system clock */
 	APP_SystemClockConfig();
-
-	MX_USART1_UART_Init();
-  MX_TIM1_Init();
   MX_GPIO_Init();
   MX_I2C_Init();
+  MX_TIM1_Init();
   MX_SPI_Init();
-  
-	set_pwm_configchannel_2(45);
+	
   /* Infinite loop */
-  
-  jl188a_lcd_display_demo();
-  fpcgg122_lcd_demo();
+  //方形屏初始化
+  jl188a_lcd_init();
+  //长条屏初始化
+  fpcgg122_lcd_init();
 
-  printf("py32002A init ok\r\n");
   while (1) {
-    HAL_Delay(100);
+    fpcgg122_lcd_demo0();//长条屏显示静态文字0
+    jl188a_lcd_display_demo0();//方形屏显示动态文字
+    
+    //方形屏pwm调背光亮度
+    if ( jl188a_check_isExist() ) {//检查屏幕是否存在，不存在跳过背光调节
+      for ( int i=99; i>=0; i-- ) {
+        set_pwm_configchannel_2(i);
+        HAL_Delay(20);
+      }HAL_Delay(500);
+      for ( int i=0; i<100; i++ ) {
+        set_pwm_configchannel_2(i);
+        HAL_Delay(20);
+      }
+    }
+
+    fpcgg122_lcd_demo1();//长条屏显示静态文字1
+    HAL_Delay(1000);
+    jl188a_lcd_display_demo1();//方形屏显示静态文字
+    HAL_Delay(2000);
+    fpcgg122_lcd_demo2();//长条屏显示静态文字2
+    HAL_Delay(2000);
   }
+  
 }
 
 /**

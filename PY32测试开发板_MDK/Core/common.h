@@ -1,24 +1,24 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
-//冲突引脚：
-// 1.RST 2.CS  B0
-// 1.SDA 2.SCK A2
+#define USE_32x32_FONT  0//32x32字模，测试板空间不足未使用
+#define USE_24x24_FONT  0//24x24字模，测试板空间不足未使用
+#define USE_ASCII16x16BOLD_FONT  0//加粗ASCII16x16字模，测试板空间不足未使用
 
 //128*32长条屏幕 排线丝印：FPC-GG12832-22W-AC
-// RST      B0 (冲突，改A4)
+// RST      A4
 // I2C_SCL  A3  
 // I2C_SDA  A2
-#define RST_GPIO_Port   GPIOB
-#define RST_Pin         GPIO_PIN_0
+#define RST_GPIO_Port   GPIOA
+#define RST_Pin         GPIO_PIN_4
 
 //64*48方形屏 排线丝印：JL-188-6633-A
-// CS		B0		CH2
-// RST		B1		CH6
-// DC		B2		CH4
-// SCK		A2		CH0 (冲突，改A5)
-// MOSI	    A1		CH1
-// BL       B4      CH3
+// CS		B0
+// RST		B1
+// DC		B2
+// SCK		A5
+// MOSI	    A1
+// BL       B3
 #define Jl188a_CS_GPIO_Port    GPIOB
 #define Jl188a_CS_Pin          GPIO_PIN_0
 #define Jl188a_RST_GPIO_Port   GPIOB
@@ -54,6 +54,9 @@
 #define FONT0 "获取屏幕开发资料"
 #define FONT1 "微信搜索公众号："
 #define FONT2 "猫狗之家电子"
-
+//#define SLIDE_STR "微信搜索公众号：猫狗之家电子获取屏幕开发资料 "
+#define DISDEMO1_STR_0  "猫狗"
+#define DISDEMO1_STR_1  "之家"
+#define DISDEMO1_STR_2  "电子"
 
 #endif /* __COMMON_H__ */

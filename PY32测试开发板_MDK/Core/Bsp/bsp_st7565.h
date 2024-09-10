@@ -37,6 +37,8 @@ void jl188a_writeFont_32x32( uint8_t x, uint8_t y, char *font );
 void jl188a_slideFont32x32( uint8_t width, uint8_t x, uint8_t y, char *font, uint16_t fIdx );
 void jl188a_writeLogo_0( uint8_t x, uint8_t y );
 
-void jl188a_lcd_display_demo( void );
+void jl188a_lcd_display_demo0( void );
+void jl188a_lcd_display_demo1( void );
+uint8_t jl188a_check_isExist( void );
 #endif /*__BSP_ST7565__H*/
 

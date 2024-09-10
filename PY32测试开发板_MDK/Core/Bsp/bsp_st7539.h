@@ -62,7 +62,9 @@ void fpcgg122_writeFont_32x32( uint8_t x, uint8_t y, char *font );
 void fpcgg122_writeLogo_0( uint8_t x, uint8_t y );
 void fpcgg122_writeFont_ASCII8x16( uint8_t x, uint8_t y, char *data, uint8_t isBold );
 
-void fpcgg122_lcd_demo( void );
+void fpcgg122_lcd_demo0( void );
+void fpcgg122_lcd_demo1( void );
+void fpcgg122_lcd_demo2( void );
 
 #endif /*__BSP_ST7539__H*/
 

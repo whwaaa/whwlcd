@@ -1,20 +1,26 @@
 #include "bsp_st7565.h"
 #include "bsp_font.h"
 
+static uint8_t isExit = 1;
+
 //SPI接口写数据
 void jl188a_writeByteData( uint8_t data ) {
-    HAL_GPIO_WritePin(Jl188a_CS_GPIO_Port, Jl188a_CS_Pin, GPIO_PIN_RESET);//CS_L
-    HAL_GPIO_WritePin(Jl188a_DC_GPIO_Port, Jl188a_DC_Pin, GPIO_PIN_SET);//1数据
-    HAL_SPI_Transmit( &hspi1, &data, 1, 1000 );
-    HAL_GPIO_WritePin(Jl188a_CS_GPIO_Port, Jl188a_CS_Pin, GPIO_PIN_SET);//CS_H
+    if ( isExit ) {
+        HAL_GPIO_WritePin(Jl188a_CS_GPIO_Port, Jl188a_CS_Pin, GPIO_PIN_RESET);//CS_L
+        HAL_GPIO_WritePin(Jl188a_DC_GPIO_Port, Jl188a_DC_Pin, GPIO_PIN_SET);//1数据
+        HAL_SPI_Transmit( &hspi1, &data, 1, 10 );
+        HAL_GPIO_WritePin(Jl188a_CS_GPIO_Port, Jl188a_CS_Pin, GPIO_PIN_SET);//CS_H
+    }
 }
 
 //SPI接口写命令
 void jl188a_writeByteCmd( uint8_t cmd ) {
-    HAL_GPIO_WritePin(Jl188a_CS_GPIO_Port, Jl188a_CS_Pin, GPIO_PIN_RESET);//CS_L
-    HAL_GPIO_WritePin(Jl188a_DC_GPIO_Port, Jl188a_DC_Pin, GPIO_PIN_RESET);//0命令
-    HAL_SPI_Transmit( &hspi1, &cmd, 1, 1000 );
-    HAL_GPIO_WritePin(Jl188a_CS_GPIO_Port, Jl188a_CS_Pin, GPIO_PIN_SET);//CS_H
+    if ( isExit ) {
+        HAL_GPIO_WritePin(Jl188a_CS_GPIO_Port, Jl188a_CS_Pin, GPIO_PIN_RESET);//CS_L
+        HAL_GPIO_WritePin(Jl188a_DC_GPIO_Port, Jl188a_DC_Pin, GPIO_PIN_RESET);//0命令
+        sta = HAL_SPI_Transmit( &hspi1, &cmd, 1, 10 );
+        HAL_GPIO_WritePin(Jl188a_CS_GPIO_Port, Jl188a_CS_Pin, GPIO_PIN_SET);//CS_H
+    }
 }
 
 /**
@@ -113,7 +119,9 @@ void jl188a_writeFont_ASCII8x16( uint8_t x, uint8_t y, char *data, uint8_t isBol
     page = y / 8;
     yu = y % 8;
     if ( isBold ) {
+        #if 0
         asciiFont_t = (uint8_t (*)[16])asciiFont_bold;
+        #endif
     } else {
         asciiFont_t = (uint8_t (*)[16])asciiFont;
     }
@@ -309,6 +317,7 @@ void jl188a_writeFont_24x24( uint8_t x, uint8_t y, char *font ) {
     }
 }
 
+
 /**
  * 显示32x32字符
  * x取值：0~63
@@ -349,7 +358,6 @@ void jl188a_writeFont_32x32( uint8_t x, uint8_t y, char *font ) {
                         for ( uint8_t j=0; j<32&&xlen_t>0; j++ ) {
                             xlen_t--;
                             jl188a_writeByteData(myFont_32[idx*4+i][j]);
-                            // printf("0输出:%02X\n");
                         }
                         break;
                     }
@@ -383,7 +391,7 @@ void jl188a_writeFont_32x32( uint8_t x, uint8_t y, char *font ) {
         }
     }
 }
-
+ 
 /**
  * 滑动显示32x32字符
  * width取值：0~63
@@ -432,13 +440,11 @@ void jl188a_slideFont32x32( uint8_t width, uint8_t x, uint8_t y, char *font, uin
                             for ( uint8_t j=offset; j<32&&xlen_t>0; j++ ) {
                                 xlen_t--;
                                 jl188a_writeByteData(myFont_32[idx*4+i][j]);
-                                printf("--0 xlen:%d   fontLen:%d   b:%d   offset:%d   j:%d\n", xlen, fontLen, b, offset, j);
                             }
                         } else {
                             for ( uint8_t j=0; j<32&&xlen_t>0; j++ ) {
                                 xlen_t--;
                                 jl188a_writeByteData(myFont_32[idx*4+i][j]);
-                                printf("--1 xlen:%d   fontLen:%d   b:%d   offset:%d   j:%d\n", xlen, fontLen, b, offset, j);
                             }
                         }
                         
@@ -531,74 +537,33 @@ void jl188a_writeLogo_0( uint8_t x, uint8_t y ) {
 }
 
 
-void jl188a_lcd_display_demo( void ) {
-    //HAL_GPIO_WritePin(Jl188a_BL_GPIO_Port, Jl188a_BL_Pin, GPIO_PIN_SET);//BL_H
-
-    if ( HAL_GPIO_ReadPin(Jl188a_BL_GPIO_Port, Jl188a_BL_Pin) == GPIO_PIN_SET ) {
-        printf("BL is SET\n");
-    } else {
-        printf("BL is RESET\n");
+/**
+ * 分辨率64*48 动态显示字符
+ */
+void jl188a_lcd_display_demo0( void ) {
+    if ( jl188a_check_isExist() ) {//检查屏幕是否存在，不存在跳过动画显示
+        jl188a_lcd_clear();
+        for ( uint16_t k=0; k<=22*32+16; k+=16 ) {
+            jl188a_writeDataToRAM( 0+1, 0, 63, (uint8_t *)&disCache[0][k] );
+            jl188a_writeDataToRAM( 1+1, 0, 63, (uint8_t *)&disCache[1][k] );
+            jl188a_writeDataToRAM( 2+1, 0, 63, (uint8_t *)&disCache[2][k] );
+            jl188a_writeDataToRAM( 3+1, 0, 63, (uint8_t *)&disCache[3][k] );
+            HAL_Delay(250);
+        }
     }
-    jl188a_lcd_init();
-
+}
+/**
+ * 分辨率64*48 显示静态页面 
+ */
+void jl188a_lcd_display_demo1( void ) {
     jl188a_lcd_clear();
-    jl188a_writeFont_16x16( 0, 0, "猫狗" );
-    jl188a_writeFont_16x16( 0, 16, "之家" );
-    jl188a_writeFont_16x16( 0, 32, "电子" );
+    jl188a_writeFont_16x16( 0, 0, DISDEMO1_STR_0 );
+    jl188a_writeFont_16x16( 0, 16, DISDEMO1_STR_1 );
+    jl188a_writeFont_16x16( 0, 32, DISDEMO1_STR_2 );
     jl188a_writeLogo_0(32,8);
-    HAL_Delay(5000);
 }
 
-// //64*48
-// uint8_t disCache[4][25*32];
-// void jl188a_lcd_test_display( void ) {
-//     uint16_t strIdx = 0;
-//     char *disStr = SLIDE_STR;
-//     uint8_t strLen = (strlen(SLIDE_STR)/3);
-
-//     for ( uint8_t b=0; b<strLen; b++ ) {
-//         for ( int i=0; i<(sizeof(myFont_32)/3); i++ ) {
-//             if ( (uint32_t)(disStr[b*3]<<16|disStr[b*3+1]<<8|disStr[b*3+2]) == myFontIdx_32[i] ) {//查找到font索引
-//                 for ( uint8_t t=0; t<4; t++ ) {
-//                     for ( uint8_t t1=0; t1<32; t1++ ) {
-//                         disCache[t][strIdx+t1] = myFont_32[i*4+t][t1];
-//                     }
-//                 }
-//                 strIdx += 32;
-//                 break;
-//             }
-//         }
-//     }
-//     for ( uint8_t t=0; t<4; t++ ) {
-//         for ( uint8_t t1=0; t1<32; t1++ ) {
-//             disCache[t][strIdx+t1] = myFont_32[22*4+t][t1];
-//         }
-//     }
-//     strIdx += 32;
-//     for ( uint8_t t=0; t<4; t++ ) {
-//         for ( uint8_t t1=0; t1<32; t1++ ) {
-//             disCache[t][strIdx+t1] = logo_0[t][t1];
-//         }
-//     }
-    
-
-//     for ( ;; ) {
-//         jl188a_lcd_clear();
-//         for ( uint16_t k=0; k<=22*32+16; k+=16 ) {
-//             jl188a_writeDataToRAM( 0+1, 0, 63, &disCache[0][k] );
-//             jl188a_writeDataToRAM( 1+1, 0, 63, &disCache[1][k] );
-//             jl188a_writeDataToRAM( 2+1, 0, 63, &disCache[2][k] );
-//             jl188a_writeDataToRAM( 3+1, 0, 63, &disCache[3][k] );
-//             HAL_Delay(250);
-//         }
-//         HAL_Delay(2000);
-
-//         jl188a_lcd_clear();
-//         jl188a_writeFont_16x16( 0, 0, "猫狗" );
-//         jl188a_writeFont_16x16( 0, 16, "之家" );
-//         jl188a_writeFont_16x16( 0, 32, "电子" );
-//         jl188a_writeLogo_0(32,8);
-//         HAL_Delay(5000);
-//     }
-// }
-
+//检查屏幕是否存在
+uint8_t jl188a_check_isExist( void ) {
+    return 1;
+}

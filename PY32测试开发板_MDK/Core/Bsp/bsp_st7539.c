@@ -1,14 +1,29 @@
 #include "bsp_st7539.h"
 #include "bsp_font.h"
 
+static uint8_t errNum = 0;
+
 //IIC接口写数据
 void fpcgg122_writeByteData( uint8_t data ) {
-    HAL_I2C_Master_Transmit( &HI2Cx, W_DAT_ADDRESS, &data, 1, 1000 );
+    uint8_t sta;
+    if ( errNum < 3 ) {
+        sta = HAL_I2C_Master_Transmit( &HI2Cx, W_DAT_ADDRESS, &data, 1, 10 );
+        if ( sta != HAL_OK ) {
+            errNum++;
+        }
+    }
 }
 
 //IIC接口写命令
 void fpcgg122_writeByteCmd( uint8_t cmd ) {
-    HAL_I2C_Master_Transmit( &HI2Cx, W_CMD_ADDRESS, &cmd, 1, 1000 );
+    uint8_t sta;
+    if ( errNum < 3 ) {
+        sta = HAL_I2C_Master_Transmit( &HI2Cx, W_CMD_ADDRESS, &cmd, 1, 10 );
+        if ( sta != HAL_OK ) {
+            errNum++;
+        }
+    }
+
 }
 
 /**
@@ -38,7 +53,6 @@ void fpcgg122_lcd_init( void ) {
  * 分8个页，每页数据8bit*192 (其中192列地址，显示区只显示0~127的数据)
  */
 void fpcgg122_lcd_clear( void ) {
-    uint8_t data;
     for ( uint8_t page=0; page<8; page++ ) {
         //Set Page Address
         fpcgg122_writeByteCmd(0xB0|page);
@@ -58,7 +72,6 @@ void fpcgg122_lcd_clear( void ) {
  * colStart: 0~127
  */
 void fpcgg122_lcd_clear_part( uint8_t pageStart, uint8_t pageSize, uint8_t colStart, uint8_t colSize ) {
-    uint8_t data;
     if ( pageSize==0 || colSize==0 ) return;
     if ( pageStart + pageSize > 8 ) return;
     if ( colStart + colSize > 128 ) return;
@@ -118,7 +131,9 @@ void fpcgg122_writeFont_ASCII8x16( uint8_t x, uint8_t y, char *data, uint8_t isB
     page = y / 8;
     yu = y % 8;
     if ( isBold ) {
+        #if 0
         asciiFont_t = (uint8_t (*)[16])asciiFont_bold;
+        #endif
     } else {
         asciiFont_t = (uint8_t (*)[16])asciiFont;
     }
@@ -386,6 +401,7 @@ void fpcgg122_writeFont_24x24( uint8_t x, uint8_t y, char *font ) {
     }
 }
 
+
 /**
  * 显示32x32字符
  * x取值：0~127
@@ -459,6 +475,7 @@ void writeFont_32x32( uint8_t x, uint8_t y, char *font ) {
     }
 }
 
+
 /**
  * 显示logo
  * x取值：0~127
@@ -507,26 +524,30 @@ void fpcgg122_writeLogo_0( uint8_t x, uint8_t y ) {
     }
 }
 
-
-void fpcgg122_lcd_demo( void ) {
-    fpcgg122_lcd_init();//初始化
+/**
+ * 前4页显示静态文本
+ */
+void fpcgg122_lcd_demo0( void ) {
     fpcgg122_lcd_clear();//清屏
     fpcgg122_writeFont_16x16(0, 0, FONT0);
     fpcgg122_writeFont_16x16(0, 16, FONT1);
-    /* Infinite loop */
-    for(;;)
-    {
-        fpcgg122_lcd_set_scroll_line(0);//从0行显示（0~3页）
-        HAL_Delay(5000);
-
-        fpcgg122_lcd_clear_part(4, 4, 0, 127);
-        fpcgg122_writeFont_21x21(0, 32+6, FONT2);
-        fpcgg122_lcd_set_scroll_line(32);//从32行显示（4~7页）
-
-        HAL_Delay(5000);
-        fpcgg122_lcd_clear_part(4, 4, 0, 127);
-        fpcgg122_writeLogo_0(45, 36);
-        HAL_Delay(3000);
-    }
+    fpcgg122_lcd_set_scroll_line(0);//从0行显示（0~3页）
 }
+/**
+ * 后4页显示静态文本
+ */
+void fpcgg122_lcd_demo1( void ) {
+    fpcgg122_lcd_clear_part(4, 4, 0, 127);
+    fpcgg122_writeFont_21x21(0, 32+6, FONT2);
+    fpcgg122_lcd_set_scroll_line(32);//从32行显示（4~7页）
+}
+/**
+ * 后4页显示LOGO
+ */
+void fpcgg122_lcd_demo2( void ) {
+    fpcgg122_lcd_clear_part(4, 4, 0, 127);
+    fpcgg122_writeLogo_0(45, 36);
+}
+
+
 
