@@ -178,7 +178,7 @@ void fpcgg122_writeFont_ASCII8x16( uint8_t x, uint8_t y, char *data, uint8_t isB
                             } else if ( i == 1 ) {
                                 fpcgg122_writeByteData(asciiFont_t[idx][j]>>(8-yu)|asciiFont_t[idx][i*8+j]<<yu);
                             } else if ( i == 2 ) {
-                                fpcgg122_writeByteData(asciiFont_t[idx][j]>>(8-yu));
+                                fpcgg122_writeByteData(asciiFont_t[idx][8+j]>>(8-yu));
                             }
                         }
                         break;
